@@ -1,0 +1,16 @@
+#!/bin/bash 
+#SBATCH -c 20
+#SBATCH -t 0-48:0 #Request runtime of 30 minutes
+#SBATCH --gres=gpu:volta:1
+#SBATCH -o ../logs/flop/output_run_%A_%a.txt #redirect output to output_JOBID.txt
+#SBATCH -e ../logs/flop/error_run_%A_%a.txt #redirect errors to error_JOBID.txt
+#SBATCH --array=0-1
+
+LLsleep=`expr 10 \* $SLURM_ARRAY_TASK_ID`
+sleep $LLsleep
+
+module purge
+module load anaconda/2021a
+module load /home/gridsan/groups/datasets/ImageNet/modulefile
+
+python3 run_flop.py 0 $SLURM_ARRAY_TASK_ID
